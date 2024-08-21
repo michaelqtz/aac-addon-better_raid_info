@@ -4,7 +4,7 @@ local better_raid_info_addon = {
 	name = "Better Raid Info",
 	author = "Michaelqt",
 	version = "0.2",
-	desc = "Improved Raid Window UI"
+	desc = "Improving Raid Manager UI, export raid lists, average gearscore."
 }
 
 local lastRadiusReset = api.Time:GetUiMsec()
