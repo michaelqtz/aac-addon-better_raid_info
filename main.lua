@@ -3,7 +3,7 @@ local api = require("api")
 local better_raid_info_addon = {
 	name = "Better Raid Info",
 	author = "Michaelqt",
-	version = "0.7",
+	version = "1.1.1",
 	desc = "Raid Manager UI, export raid lists, average stats."
 }
 
@@ -196,6 +196,10 @@ local function OnLoad()
 	end)
 
 	function onRaidFrameToggle(frame, show)
+		api.Log:Info("frame")
+		for key, value in pairs(frame) do
+			api.Log:Info("key: " .. tostring(key) .. ", value: " .. tostring(value))
+		end
         raidManagerWnd.rangeInviteBtn:Enable(true)
     end
 
