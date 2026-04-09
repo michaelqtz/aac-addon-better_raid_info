@@ -3,7 +3,7 @@ local api = require("api")
 local better_raid_info_addon = {
 	name = "Better Raid Info",
 	author = "Michaelqt",
-	version = "1.1.1",
+	version = "1.1.2",
 	desc = "Raid Manager UI, export raid lists, average stats."
 }
 
@@ -147,11 +147,12 @@ local function OnLoad()
 	exportRaidTextBtn:SetText("Export Raid List")
 	exportRaidTextBtn:AddAnchor("TOPRIGHT", raidManagerWnd, -30, 30)
 	api.Interface:ApplyButtonSkin(exportRaidTextBtn, BUTTON_BASIC.DEFAULT)
-
+	raidManagerWnd.exportRaidTextBtn = exportRaidTextBtn
 
 	local exportRaidTextWnd = api.Interface:CreateWindow("exportRaidTextWnd", "Exported Raid List")
 	exportRaidTextWnd:AddAnchor("RIGHT", raidManagerWnd, 0, 0)
 	exportRaidTextWnd:SetExtent(300, 1000)
+	raidManagerWnd.exportRaidTextWnd = exportRaidTextWnd
 
 	local raidListTextEdit = W_CTRL.CreateMultiLineEdit("raidListTextEdit", exportRaidTextWnd)
 	local sizeX, sizeY = exportRaidTextWnd:GetExtent()
@@ -168,25 +169,30 @@ local function OnLoad()
 		local displayString = ""
 		
 		for i=1, maxRaidMemberCount do
-			local partyIndex = math.ceil(i / 5)
-			local memberIndex = i % 5
-			if memberIndex == 0 then
-				-- displayString = displayString .. "\n"
-			  	memberIndex = 5
-			end
-			local member = raidManagerWnd.party[partyIndex].member[memberIndex]
-			if member ~= nil then 
-				local nameLabelVisible = raidManagerWnd.party[partyIndex].member[memberIndex].nameLabel:IsVisible()
-				if nameLabelVisible and api.Unit:GetUnitId("team" .. tostring(i)) ~= nil then 
-					local memberName = raidManagerWnd.party[partyIndex].member[memberIndex].nameLabel:GetText()
-					displayString = displayString .. tostring(memberName) .. "\n"
-				else
-					-- Skip the player
-					-- displayString = displayString .. tostring("skipped") .. "\n"
-				end
-			else
-				-- api.Log:Info("empty member slot...")
-			end
+			local memberName = api.Unit:UnitName("team" .. tostring(i))
+			if memberName ~= nil then
+				displayString = displayString .. tostring(memberName) .. "\n"
+			end 
+
+			-- local partyIndex = math.ceil(i / 5)
+			-- local memberIndex = i % 5
+			-- if memberIndex == 0 then
+			-- 	-- displayString = displayString .. "\n"
+			--   	memberIndex = 5
+			-- end
+			-- local member = raidManagerWnd.party[partyIndex].member[memberIndex]
+			-- if member ~= nil then 
+			-- 	local nameLabelVisible = raidManagerWnd.party[partyIndex].member[memberIndex].nameLabel:IsVisible()
+			-- 	if nameLabelVisible and api.Unit:GetUnitId("team" .. tostring(i)) ~= nil then 
+			-- 		local memberName = raidManagerWnd.party[partyIndex].member[memberIndex].nameLabel:GetText()
+			-- 		displayString = displayString .. tostring(memberName) .. "\n"
+			-- 	else
+			-- 		-- Skip the player
+			-- 		-- displayString = displayString .. tostring("skipped") .. "\n"
+			-- 	end
+			-- else
+			-- 	-- api.Log:Info("empty member slot...")
+			-- end
 			-- displayString = displayString .. "raidMember" .. tostring(i) .. "\n"
 		end 
 		raidListTextEdit:SetText(displayString)
@@ -213,6 +219,8 @@ local function OnUnload()
 	raidManagerWnd = ADDON:GetContent(UIC.RAID_MANAGER)
 	raidManagerWnd.avgGsLabel:SetText("")
 	raidManagerWnd.avgLootDropLabel:SetText("")
+	raidManagerWnd.exportRaidTextBtn:Show(false)
+	raidManagerWnd.exportRaidTextWnd:Show(false)
 end
 
 better_raid_info_addon.OnLoad = OnLoad
